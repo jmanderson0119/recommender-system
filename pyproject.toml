@@ -1,0 +1,25 @@
+[project]
+name = "recommender-system"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Jacob Anderson",email = "janderson011903@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "scikit-surprise (>=1.1.4,<2.0.0)",
+    "torch (>=2.11.0,<3.0.0)",
+    "pandas (>=3.0.2,<4.0.0)",
+    "jupyter (>=1.1.1,<2.0.0)",
+    "ipykernel (>=7.2.0,<8.0.0)",
+    "nbconvert (>=7.17.0,<8.0.0)",
+    "scikit-learn (>=1.8.0,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "recommender_system", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
