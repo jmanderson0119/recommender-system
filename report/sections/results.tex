@@ -1,0 +1,72 @@
+\section{Results}
+
+\subsection{RMSE and MAE by Algorithm}
+
+RMSE and MAE were computed between the sample set and the predicted ratings for each algorithm:
+$$\text{RMSE} = \sqrt{\frac{1}{|\mathcal{T}|}\sum_{(u,i) \in \mathcal{T}}(r_{ui} - \hat{r}_{ui})^2}$$
+$$\text{MAE} = \frac{1}{|\mathcal{T}|}\sum_{(u,i) \in \mathcal{T}}|r_{ui} - \hat{r}_{ui}|$$
+Table 1 gives the performance metrics for each fold across all five algorithms.
+
+{\small
+\renewcommand{\arraystretch}{0.85}
+\setlength{\tabcolsep}{4pt}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{lrrr}
+    \hline
+    \textbf{Fold} & \textbf{RMSE} & \textbf{MAE} & \textbf{Time} \\
+    \hline
+    \multicolumn{4}{l}{\textit{Random}} \\
+    1    & 1.4292 & 1.1391 & 0:00:00 \\
+    2    & 1.4131 & 1.1272 & 0:00:00 \\
+    3    & 1.4239 & 1.1359 & 0:00:00 \\
+    4    & 1.4386 & 1.1490 & 0:00:00 \\
+    5    & 1.4422 & 1.1541 & 0:00:00 \\
+    Mean & 1.4294 & 1.1411 & 0:00:00 \\
+    \hline
+    \multicolumn{4}{l}{\textit{SVD}} \\
+    1    & 0.8557 & 0.6529 & 0:00:03 \\
+    2    & 0.8452 & 0.6470 & 0:00:03 \\
+    3    & 0.8385 & 0.6432 & 0:00:03 \\
+    4    & 0.8470 & 0.6494 & 0:00:03 \\
+    5    & 0.8557 & 0.6547 & 0:00:03 \\
+    Mean & 0.8484 & 0.6494 & 0:00:03 \\
+    \hline
+    \multicolumn{4}{l}{\textit{Neural Network}} \\
+    1    & 0.8727 & 0.6655 & 0:00:22 \\
+    2    & 0.8607 & 0.6630 & 0:00:20 \\
+    3    & 0.8596 & 0.6622 & 0:00:19 \\
+    4    & 0.8597 & 0.6630 & 0:00:22 \\
+    5    & 0.8704 & 0.6663 & 0:00:21 \\
+    Mean & 0.8646 & 0.6640 & 0:00:21 \\
+    \hline
+  \end{tabular}
+  \caption{RMSE, MAE, and runtime per fold for each algorithm.}
+  \label{tab:cv-results}
+\end{table}
+}
+
+\subsection{Pairwise RMSE}
+
+RMSE was computed between the predicted ratings of all possible pairs of the five algorithms.
+
+{\small
+\renewcommand{\arraystretch}{0.85}
+\setlength{\tabcolsep}{4pt}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{l|ccccc}
+    \toprule
+    & \textbf{Random} & \textbf{kNN} & \textbf{SVD} & \textbf{MF} & \textbf{NN} \\
+    \midrule
+    \textbf{Random} & 0 &   &   &   &   \\
+    \textbf{kNN}    &   & 0 &   &   &   \\
+    \textbf{SVD}    &   &   & 0 &   &   \\
+    \textbf{MF}     &   &   &   & 0 &   \\
+    \textbf{NN}     &   &   &   &   & 0 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Pairwise RMSE between predicted ratings of each algorithm pair.}
+  \label{tab:pairwise-rmse}
+\end{table}
+}
