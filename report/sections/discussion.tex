@@ -1,1 +1,18 @@
 \section{Discussion}
+
+\subsection{Cross-Validation Performance}
+
+SVD achieved the best result on the dataset with an average RMSE of 0.4872, followed closely by the neural network at 0.8672. The matrix factorization and kNN
+algorithms produced intermediate results at 0.9413 and 0.9645 respectively, and the random baseline established a baseline RMSE of 1.4289. The neural network's additional
+capacity did not provide an advantage of the classical methods, likely due the size of the dataset and in turn the overfitting constraints that the network had to contend with,
+as well as the fact that this dataset is known to be well-suited to linear factor models. Nonetheless, the matrix factorization methord performed significantly worse than SVD,
+indicating that the bias terms and global mean setting of the predictions are valuable for modeling the user-item interractions within the data. The kNN method performed worse than
+the other collaborative filtering methods, which was expected given how limiting the tag-based similarity is relative to the complexity of the rating signal.
+
+\subsection{Pairwise RMSE}
+
+As expected, the largest pairwise RMSE values involve the random algorithm, which given the performance measures indicates that the prediction behavior is quite different from the 
+trained algorithms. Among the other four, SVD and neural network produce the most similar predictions at 0.2347, which suggest that the neural network is learning a similar latent factor 
+representation of the rating data; however, given its performance, it is likely not as well-optimized due to its respective constraints. The SVD and matrix factorization algorithms
+are noticeably different at 0.4348, though the absence of the bias terms produces a noticeably degraded and different prediction signal. The two most different algorithms aside from the baseline
+were the kNN and matrix factorization at 0.6537, which utilize completely different signals and assumptions in producing a rating model.

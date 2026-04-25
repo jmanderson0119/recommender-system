@@ -2,17 +2,17 @@
 
 \subsection{Random}
 
-\subsubsection{Theoretical Motivation}
+\subsubsection{Theoretical Motivation.}
 
-The random algorithm is a baseline upon which to compare the other algorithms. In our analysis, we use the Surprise library's `NormalPredictor` 
-impelementation, which fits a Gaussian distribution to the training ratings and samples predicted values for each test pair.
+The random algorithm is a baseline upon which to compare the other algorithms. In our analysis, we use the Surprise library's NormalPredictor
+implementation, which fits a Gaussian distribution to the training ratings and samples predicted values for each test pair.
 
 Formally, given a training set $\mathcal{R} = \{r_{ui}\}$ of ratings for users $ u $ and movie $ i $, parameters are fit to the empirical distribution 
 using maximum likelihood: $ \mu = \frac{1}{|\mathcal{R}|} \sum_{(u,i) \in \mathcal{R}} r_{ui} $, and $\sigma^2 = \frac{1}{|\mathcal{R}|} \sum_{(u,i) \in \mathcal{R}} (r_{ui} - \mu)^2$. 
 Then, for each test pair $(u, i) \in \mathcal{T}$, a predicted rating is sampled from the distribution as $\hat{r}_{ui} \sim \mathcal{N}(\mu, \sigma^2)$,
 and the sample is then clipped to the valid range for ratings, which in this dataset is between 0.5 and 5.0.
 
-\subsubsection{Hyperparameters}
+\subsubsection{Hyperparameters.}
 
 The only hyperparameter involved in the Random algorithm is the choice of distribution. This selection could be based on the observed
 rating distribution of the data, but the Surprise implementation currently supports only the Gaussian. Nonetheless, for an attribute 
@@ -20,13 +20,19 @@ that is performance-based in nature, a bell-curve distribution assumption is the
 
 \subsection{k-Nearest Neighbors (kNN)}
 
-\subsubsection{Theoretical Motivation}
+\subsubsection{Theoretical Motivation.}
 
-\subsubsection{Hyperparameters}
+Our analysis used the user generated 'tags', or words describing the movies to recommend similar movies. kNN used the movie tags to compare the similarities between the movies, so it was not a user-based implementation. We implemented Surprise library's KNNBasic using cosine distance. 
+
+How kNN works is it first converts each movie into a vector using the tags that describe it. Next it compares two movies to find how similar they are, we used cosine distance here because it is good for sparse datasets. Then the algorithm finds the k most similar movies and takes the ratings of these neighbor movies and computes a weighted average to produce the predicted rating. The algorithm repeats this process for every user-movie pair in the dataset. 
+
+\subsubsection{Hyperparameters.}
+
+The hyperparameter in kNN is k, the number of nearest neighbors that will be taken into account when making predictions. After testing multiple values of k and comparing the RMSE and MAE for each one, we found that k=80 was the best k value to use. This tells us that the model performs better when it can smooth predictions over many neighbors. 
 
 \subsection{Singular Value Decomposition (SVD)}
 
-\subsubsection{Theoretical Motivation}
+\subsubsection{Theoretical Motivation.}
 
 The prediction for each user-item rating is given as a linear combination of latent factor vectors learned for the user and item and learned bias terms for each item and user,
 $ \hat{r}_{ui} = \mu + b_u + b_i + q_i^T p_u $, where $ \mu $ is the empirical mean rating. The bias terms themselves represented the tendency of some user to rate
@@ -45,10 +51,10 @@ where $ \gamma $ is the learning rate hyperparameter. Each update is applied in 
 constitute one epoch. Following training, a prediction for each test pair $ (u, i) \in \mathcal{T} $ again is given by 
 $ \hat{r}_{ui} = \mu + b_u + b_i + q_i^T p_u $, which is performed for each fold.
 
-\subsubsection{Hyperparameters}
+\subsubsection{Hyperparameters.}
 
 This algorithm is dicated by four hyperparameters: the choice of latent factor dimension $ k $, the number of epochs, the learning rate $ \gamma $, and the regularization 
-strength $ \lambda $. $ k $ controls the dimensionality of the latent space and balances a more complex item user interaction with risk of overfitting, 
+strength $ \lambda $. $ k $ controls the dimensionality of the latent space and balances a more complex item-user interaction with risk of overfitting, 
 $ \gamma $ controls the step size of each SGD update and will determine how efficiently the SGD can converge toward an optimum, and the setting 
 of $ \lambda $ balances the cost of overfitting with potentially underfitting if the regularization is too strong.
 
@@ -59,19 +65,28 @@ $$ \gamma \in \{0.002, 0.005, 0.01\} $$
 $$ \lambda \in \{0.02, 0.05, 0.1\} $$
 The optimal settings given by the search were $k = 200$, $\text{epochs} = 100$, $\gamma = 0.01$, and $\lambda = 0.1$. The 
 search suggest that the model benefits from the largest latent representation to capture user and item characteristics coupled with a high 
-number of epochs with which to produce a model of these user-item interactions. The optimization space is amenable to large parameter 
+number of epochs with which to produce a model of the user-item interactions. The optimization space is amenable to large parameter 
 updates, and the strong regularization is likely necessary to 
 prevent the model from overfitting.
 
 \subsection{Matrix Factorization with Regularization}
 
-\subsubsection{Theoretical Motivation}
+\subsubsection{Theoretical Motivation.}
 
-\subsubsection{Hyperparameters}
+Matrix factorization with regularization is similar to SVD but does not include biases, or baselines, with which to model the predicted ratings, 
+instead relying on only the latent factor vectors, $ \hat{r}_{ui} = p_u^\top q_i $.
+
+Regularization via the sum of squared latent factor vector norms is used to prevent overfitting and improve generalization. We again used Surprise's SVD implementation, changing 'biased = False' to exclude an baselines. 
+
+\subsubsection{Hyperparameters.}
+
+The hyperparameters we tested for our matrix factorization were the number of factors and the regularization strength. The combination that yielded the best average RMSE were 10 factors and a 0.02 regularization strength. Without the mean and biases terms, we see that
+the model benefits from a low-dimensional latent representation, which limits its capacity to memorize patterns in the training set, and through this implicit regularization, the model is most amenable to a low regularization strength.
+
 
 \subsection{Deep Neural Network}
 
-\subsubsection{Theoretical Motivation}
+\subsubsection{Theoretical Motivation.}
 
 In the deep neural network algorithmm, users and movies are represented by learned vectors in a shared latent space, 
 which are passed through a neural network structure to produce a rating prediction. First, the MovieLens user and movie IDs are remapped to a 0-based contiguous index range, and from these IDs, embeddings are retrived from a lookup tables at the beginning of 
@@ -87,7 +102,7 @@ The network minimizes MSE over each training fold and parameter updates are perf
 faciliated by mini-batch SGD, where loss over each batch of ratings $\mathcal{B}$ is given as $ L = \frac{1}{|B|} \sum_{(u,i) \in B} (r_{ui} - \hat{r}_{ui})^2 $. The gradient of $ L $ with respect to all parameters is computed and the Adam update is applied. This process repeats over all batches in the training 
 set constituting one epoch. Once parameter estimations were produced, a prediction for each test pair $(u, i) \in \mathcal{T}$ is given by a forward pass through the network, repeated for each fold.
 
-\subsubsection{Hyperparameters}
+\subsubsection{Hyperparameters.}
 
 The hyperparameters can be split into two classes: those related to network structure and those related to the training. 
 Regarding the network structure, the embedding dimension controls how complex the interactions of latent representations may be, and the hidden layer configuration controls the 

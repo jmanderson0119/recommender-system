@@ -1,1 +1,6 @@
 \section{Conclusion}
+
+SVD produced the best predictive performance on the MovieLens dataset and confirms that linear latent factor models are most amenable to predicting user ratings, as we saw with 
+the Netflix prize. The pairwise RMSE analysis showed that the neural network however does well to produce a similar prediction signal as SVD, even more so than the matrix
+factorization. Given this quality, future work on this project should include an ablation of each term in the SVD model to determine which components are most important relative to
+the prediction signal, and additional features provided to the neural network such as movie genres and user demographics would serve as a more meaningful comparison to the SVD model.
